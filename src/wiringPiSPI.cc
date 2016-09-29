@@ -1,10 +1,12 @@
 #include "wiringPiSPI.h"
 #include <wiringPiSPI.h>
+#include <unistd.h>
 
 DECLARE(wiringPiSPIGetFd);
 DECLARE(wiringPiSPIDataRW);
 DECLARE(wiringPiSPISetup);
 DECLARE(wiringPiSPISetupMode);
+DECLARE(wiringPiSPIClose);
 
 // Func : int wiringPiSPIGetFd(int channel)
 
@@ -98,9 +100,30 @@ IMPLEMENT(wiringPiSPISetupMode) {
   SCOPE_CLOSE(INT32(res));
 }
 
+// Func : void wiringPiSPIClose(const int fd)
+// Description : This closes opened SPI file descriptor
+// fd is file descriptor returned either from wiringPiSPISetup or wiringPiSPISetupMode
+
+IMPLEMENT(wiringPiSPIClose) {
+  SCOPE_OPEN();
+
+  SET_ARGUMENT_NAME(0, fd);
+
+  CHECK_ARGUMENTS_LENGTH_EQUAL(1);
+
+  CHECK_ARGUMENT_TYPE_INT32(0);
+
+  int fd = GET_ARGUMENT_AS_INT32(0);
+
+  ::close(fd);
+
+  SCOPE_CLOSE(UNDEFINED());
+}
+
 IMPLEMENT_EXPORT_INIT(wiringPiSPI) {
   EXPORT_FUNCTION(wiringPiSPIGetFd);
   EXPORT_FUNCTION(wiringPiSPIDataRW);
   EXPORT_FUNCTION(wiringPiSPISetup);
   EXPORT_FUNCTION(wiringPiSPISetupMode);
+  EXPORT_FUNCTION(wiringPiSPIClose);
 }

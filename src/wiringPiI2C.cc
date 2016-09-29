@@ -1,5 +1,6 @@
 #include "wiringPiI2C.h"
 #include <wiringPiI2C.h>
+#include <unistd.h>
 
 DECLARE(wiringPiI2CRead);
 DECLARE(wiringPiI2CReadReg8);
@@ -9,6 +10,7 @@ DECLARE(wiringPiI2CWriteReg8);
 DECLARE(wiringPiI2CWriteReg16);
 DECLARE(wiringPiI2CSetupInterface);
 DECLARE(wiringPiI2CSetup);
+DECLARE(wiringPiI2CClose);
 
 // Func : int wiringPiI2CRead (int fd);
 // Simple device read. Some devices present data when you read them without having to do any register transactions.
@@ -188,6 +190,26 @@ IMPLEMENT(wiringPiI2CSetup) {
   SCOPE_CLOSE(INT32(res));
 }
 
+// Func : void wiringPiI2CClose(const int fd)
+// Description : This closes opened I2C file descriptor
+// fd is file descriptor returned either from wiringPiI2CSetup or wiringPiI2CSetupInterface
+
+IMPLEMENT(wiringPiI2CClose) {
+  SCOPE_OPEN();
+
+  SET_ARGUMENT_NAME(0, fd);
+
+  CHECK_ARGUMENTS_LENGTH_EQUAL(1);
+
+  CHECK_ARGUMENT_TYPE_INT32(0);
+
+  int fd = GET_ARGUMENT_AS_INT32(0);
+
+  ::close(fd);
+
+  SCOPE_CLOSE(UNDEFINED());
+}
+
 IMPLEMENT_EXPORT_INIT(wiringPiI2C) {
   EXPORT_FUNCTION(wiringPiI2CRead);
   EXPORT_FUNCTION(wiringPiI2CReadReg8);
@@ -197,4 +219,5 @@ IMPLEMENT_EXPORT_INIT(wiringPiI2C) {
   EXPORT_FUNCTION(wiringPiI2CWriteReg16);
   EXPORT_FUNCTION(wiringPiI2CSetupInterface);
   EXPORT_FUNCTION(wiringPiI2CSetup);
+  EXPORT_FUNCTION(wiringPiI2CClose);
 }
