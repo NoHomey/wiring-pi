@@ -1,5 +1,6 @@
 #include "softTone.h"
 #include <softTone.h>
+#include <errno.h>
 
 DECLARE(softToneCreate);
 DECLARE(softToneWrite);
@@ -27,6 +28,10 @@ IMPLEMENT(softToneCreate) {
   int pin = GET_ARGUMENT_AS_INT32(0);
   
   int res = ::softToneCreate(pin);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, pthread_create);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }

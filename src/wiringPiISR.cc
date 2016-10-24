@@ -1,6 +1,7 @@
 #include "wiringPiISR.h"
 #include <wiringPi.h>
 #include <uv.h>
+#include <errno.h>
 
 using namespace v8;
 
@@ -162,7 +163,11 @@ IMPLEMENT(wiringPiISR) {
   interrupt_callbacks[pin] = callback;
   interrupt_data[pin].previous_timestamp = ::micros();
 
-  ::wiringPiISR(pin, edgeType, interrupt_handlers[pin]);
+  int res = ::wiringPiISR(pin, edgeType, interrupt_handlers[pin]);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, execl);
+  }
 
   uv_async_init(uv_default_loop(), &async_handlers[pin], &dispatchInterrupt);
   uv_ref((uv_handle_t*)&async_handlers[pin]);

@@ -1,6 +1,7 @@
 #include "wiringPiI2C.h"
 #include <wiringPiI2C.h>
 #include <unistd.h>
+#include <errno.h>
 
 DECLARE(wiringPiI2CRead);
 DECLARE(wiringPiI2CReadReg8);
@@ -27,6 +28,10 @@ IMPLEMENT(wiringPiI2CRead) {
   int fd = GET_ARGUMENT_AS_INT32(0);
   
   int res = ::wiringPiI2CRead(fd);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -49,6 +54,10 @@ IMPLEMENT(wiringPiI2CReadReg8) {
   int reg = GET_ARGUMENT_AS_INT32(1);
   
   int res = ::wiringPiI2CReadReg8(fd, reg);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -72,6 +81,10 @@ IMPLEMENT(wiringPiI2CReadReg16) {
 
   int res = ::wiringPiI2CReadReg16(fd, reg);
 
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
+
   SCOPE_CLOSE(INT32(res));
 }
 
@@ -94,6 +107,10 @@ IMPLEMENT(wiringPiI2CWrite) {
   data = data & 0xFF;
   
   int res = ::wiringPiI2CWrite(fd, data);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -121,6 +138,10 @@ IMPLEMENT(wiringPiI2CWriteReg8) {
 
   int res = ::wiringPiI2CWriteReg8(fd, reg, data);
 
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
+
   SCOPE_CLOSE(INT32(res));
 }
 
@@ -143,6 +164,10 @@ IMPLEMENT(wiringPiI2CWriteReg16) {
   data = data & 0xFFFF;
 
   int res = ::wiringPiI2CWriteReg16(fd, reg, data);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
 
   SCOPE_CLOSE(INT32(res));
 }
@@ -168,6 +193,10 @@ IMPLEMENT(wiringPiI2CSetupInterface) {
   int devId = GET_ARGUMENT_AS_INT32(1);
   
   int res = ::wiringPiI2CSetupInterface(*device, devId);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, open);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -186,6 +215,10 @@ IMPLEMENT(wiringPiI2CSetup) {
   int devId = GET_ARGUMENT_AS_INT32(0);
   
   int res = ::wiringPiI2CSetup(devId);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, open);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }

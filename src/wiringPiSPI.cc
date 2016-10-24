@@ -1,6 +1,7 @@
 #include "wiringPiSPI.h"
 #include <wiringPiSPI.h>
 #include <unistd.h>
+#include <errno.h>
 
 DECLARE(wiringPiSPIGetFd);
 DECLARE(wiringPiSPIDataRW);
@@ -48,6 +49,10 @@ IMPLEMENT(wiringPiSPIDataRW) {
   CHECK_ARGUMENT_IN_INTS(0, channel, (0, 1));
   
   int res = ::wiringPiSPIDataRW(channel, reinterpret_cast<unsigned char*>(data), length);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -71,6 +76,10 @@ IMPLEMENT(wiringPiSPISetup) {
   CHECK_ARGUMENT_IN_INTS(0, channel, (0, 1));
   
   int res = ::wiringPiSPISetup(channel, speed);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, open);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -96,6 +105,10 @@ IMPLEMENT(wiringPiSPISetupMode) {
   CHECK_ARGUMENT_IN_INTS(2, mode, (0, 1, 2, 3));
   
   int res = ::wiringPiSPISetupMode(channel, speed, mode);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, open);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }

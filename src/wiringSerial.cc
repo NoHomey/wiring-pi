@@ -1,5 +1,6 @@
 #include "wiringSerial.h"
 #include <wiringSerial.h>
+#include <errno.h>
 
 DECLARE(serialOpen);
 DECLARE(serialClose);
@@ -31,6 +32,10 @@ IMPLEMENT(serialOpen) {
   int baudrate = GET_ARGUMENT_AS_INT32(1);
   
   int res = ::serialOpen(*device, baudrate);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, open);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -138,6 +143,10 @@ IMPLEMENT(serialDataAvail) {
   int fd = GET_ARGUMENT_AS_INT32(0);
   
   int res = ::serialDataAvail(fd);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, ioctl);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
@@ -158,6 +167,10 @@ IMPLEMENT(serialGetchar) {
   int fd = GET_ARGUMENT_AS_INT32(0);
   
   int res = ::serialGetchar(fd);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, read);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }

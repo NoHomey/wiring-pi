@@ -1,5 +1,6 @@
 #include "softPwm.h"
 #include <softPwm.h>
+#include <errno.h>
 
 DECLARE(softPwmCreate);
 DECLARE(softPwmWrite);
@@ -36,6 +37,10 @@ IMPLEMENT(softPwmCreate) {
   int range = GET_ARGUMENT_AS_INT32(2);
   
   int res = ::softPwmCreate(pin, value, range);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, pthread_create);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }

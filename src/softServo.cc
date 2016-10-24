@@ -1,5 +1,6 @@
 #include "softServo.h"
 #include <softServo.h>
+#include <errno.h>
 
 DECLARE(softServoWrite);
 DECLARE(softServoSetup);
@@ -62,6 +63,10 @@ IMPLEMENT(softServoSetup) {
   int p7 = GET_ARGUMENT_AS_INT32(7);
   
   int res = ::softServoSetup(p0, p1, p2, p3, p4, p5, p6, p7);
+
+  if(res == -1) {
+    THROW_ERRNO_EXCEPTION(errno, pthread_create);
+  }
   
   SCOPE_CLOSE(INT32(res));
 }
