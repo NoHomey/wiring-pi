@@ -20,6 +20,7 @@
   
   bool find_string(const char* string, const char* array[], size_t s);
   bool find_int(const int value, const int array[], size_t s);
+  v8::Local<v8::Value> ErrnoException(v8::Isolate* isolate, int errorno, const char* syscall);
   
   #if NODE_VERSION_AT_LEAST(0, 11, 0)
     void throw_error(v8::Isolate* isolate, const char* fmt, ...);
@@ -163,6 +164,12 @@
   #endif
   
   #if NODE_VERSION_AT_LEAST(0, 11, 0)
+    #define THROW_EXCEPTION(exception) isolate->ThrowException(exception)
+  #else
+    #define THROW_EXCEPTION(exception) v8::ThrowException(exception)
+  #endif
+
+  #if NODE_VERSION_AT_LEAST(0, 11, 0)
     #define THROW_ERROR(fmt, ...) \
       throw_error(isolate, fmt, __VA_ARGS__); \
       SCOPE_CLOSE(UNDEFINED());
@@ -171,6 +178,9 @@
       throw_error(fmt, __VA_ARGS__); \
       SCOPE_CLOSE(UNDEFINED())
   #endif
+
+  #define ERRNO_CASE(e) case e: return #e
+  #define THROW_ERRNO_EXCEPTION(errorno, syscall) THROW_EXCEPTION(ErrnoException(isolate, errorno, #syscall))
   
   #define SET_ARGUMENT_NAME(id, name) static const char* arg##id = #name
   #define GET_ARGUMENT_NAME(id) arg##id
