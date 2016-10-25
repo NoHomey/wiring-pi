@@ -82,6 +82,7 @@ const char* errno_string(int errorno) {
     ERRNO_CASE(EIO);
     ERRNO_CASE(ELIBBAD);
     ERRNO_CASE(ENOEXEC);
+    ERRNO_CASE(E2BIG);
     default: return "";
   }
 }
